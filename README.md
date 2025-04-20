@@ -1,13 +1,13 @@
 # Levi's Marketplace E-commerce Website
 
-Welcome to the **Levi's Marketplace**! This is a fully functional e-commerce website built with Django (backend) and React (frontend), offering users an easy and secure shopping experience. Users can browse products, select sizes, make payments, and track orders. It will have three modules: general visitors, users, and the admin.
+Welcome to the **Levi's Marketplace**! This is a fully functional e-commerce website built with Django (a Python web framework), offering users an easy and secure shopping experience. Users can browse products, select sizes, make payments, and track orders. It will have three modules: general visitors, users, and the admin.
 
 ## Key Features
 
-- **User Authentication:** Secure login and registration with email verification.
+- **User Authentication:** login and registration with email verification.
 - **User Profile:** Manage personal details, view order history, and download invoices.
 - **Product Browsing & Size Variants:** Easily browse products and select the right size.
-- **Shopping Cart:** Add, update, or remove products before checkout.
+- **Shopping Cart:** Add or remove products before checkout.
 - **Payment Integration (Razorpay):** Secure payments with Razorpay and invoice generation.
 - **Order Management:** Track order status and access invoices from the user’s profile.
 - **Admin Dashboard:** Manage products, users, orders, and download reports (7, 30 days, or all orders).
