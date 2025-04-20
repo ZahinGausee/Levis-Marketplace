@@ -1,0 +1,143 @@
+/* Update the filter section styles */
+.filter-section {
+    background-color: #faf0f0;
+    padding: 20px 0;
+    position: sticky;
+    top: 100px;
+    z-index: 900;
+    transition: all 0.3s ease;
+}
+
+.filter-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    margin: 0;
+    padding-left: 20px;
+}
+
+.filter-tabs {
+    margin-bottom: 15px;
+}
+
+.filter-tabs .nav-tabs {
+    border: none;
+    gap: 30px;
+    padding: 0 20px;
+}
+
+.filter-tabs .nav-link {
+    border: none;
+    color: #666;
+    font-weight: 500;
+    padding: 10px 0;
+    margin: 0;
+    position: relative;
+    background: transparent;
+    transition: color 0.3s ease;
+}
+
+.filter-tabs .nav-link.active {
+    color: #e41e3f;
+    font-weight: 600;
+}
+
+.filter-tabs .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #e41e3f;
+}
+
+.category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 0 20px;
+}
+
+.category-pill {
+    background-color: white;
+    border: 1px solid #e8e8e8;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.category-pill:hover {
+    background-color: #f8f8f8;
+    border-color: #ddd;
+}
+
+.more-pill {
+    color: #e41e3f;
+    font-weight: 600;
+}
+
+/* Update the filter section states */
+.filter-section.compact {
+    padding: 10px 0;
+}
+
+.filter-section.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .filter-tabs .nav-tabs {
+        gap: 20px;
+    }
+    
+    .filter-tabs .nav-link {
+        font-size: 14px;
+    }
+    
+    .category-pill {
+        padding: 6px 16px;
+        font-size: 13px;
+    }
+    
+    .filter-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .filter-tabs .nav-tabs {
+        gap: 15px;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .filter-tabs .nav-tabs::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .category-pills {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 5px;
+    }
+    
+    .category-pills::-webkit-scrollbar {
+        display: none;
+    }
+}

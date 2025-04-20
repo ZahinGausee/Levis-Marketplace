@@ -1,0 +1,196 @@
+{% load humanize %}
+{% load tz %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm;
+            {% comment %} background-image: url('/media/.png');
+            background-opacity: 0.5; {% endcomment %}
+        }
+        body {
+            font-family: "DejaVu Sans", sans-serif;
+            font-size: 12px;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            color: #d61a1a;
+            border-bottom: 2px solid #d61a1a;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .invoice-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f2b5d;
+        }
+        .details {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .info-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+            font-size: 13px;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #002244;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .table th {
+            background: #0f2b5d;
+            color: white;
+            font-size: 14px;
+        }
+        .table td {
+            font-size: 13px;
+            background: #ffffff;
+        }
+        .total {
+            text-align: right;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 2px solid #ddd;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <div class="container">
+        <div class="header">LEVIS MARKETPLACE</div>
+        <div class="invoice-title">INVOICE</div>
+
+        <!-- Details Section -->
+        <div class="details">
+            <div><strong>Order #:</strong> {{ order.uid }}
+            <br><strong>Date:</strong> {{ order.created_at|date:"F d, Y" }}
+            </div>
+        </div>
+        {% comment %} <div class="details"><strong>Status:</strong> {{ order.status }}</div> {% endcomment %}
+
+        <!-- Billed To & From -->
+        <div class="grid-container">
+            <div>
+                <div class="info-box">
+                    <strong>Billed To:</strong><br>
+                    {{ order.user.first_name }}&nbsp;{{ order.user.last_name }}<br>
+                    {{ order.user.profile.address }}<br>
+                    {{ order.user.profile.phone }}<br>
+                    {{ order.user.email }}
+                </div>
+            </div>
+            <div>
+                <div class="info-box">
+                    <strong>From:</strong><br>
+                    Levis Marketplace<br>
+                    Shop 3, Shyamal Cross Road, Satellite<br>
+                    Sayamal, Ahmedabad-380015, Gujarat, India<br>
+                    support@levismarketplace.in<br>
+                    GSTIN: 24AAACW2961M1Z3
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+         <div class="section-title">ORDER SUMMARY</div>
+         <table class="table">
+             <tr>
+                <th style="width: 5%;">#</th>
+                <th style="width: 35%;">Product</th>
+                <th style="width: 15%;">Color</th>
+                <th style="width: 10%;">Size</th>
+                <th style="width: 10%;">Qty</th>
+                <th style="width: 15%;">Price</th>
+                <th style="width: 15%;">Total</th>
+             </tr>
+             {% for item in order.order_items.all %}
+             <tr>
+                 <td>{{ forloop.counter }}</td>
+                 <td>{{ item.product.product_name }}</td>
+                 <td>{{ item.color_variant.color_name|default:"-" }}</td>
+                 <td>{{ item.size_variant.size_name|default:"-" }}</td>
+                 <td>{{ item.quantity }}</td>
+                 <td>{{ item.price|floatformat:0|intcomma }}</td>
+                 <td>{{ item.quantity|mul:item.price|floatformat:0|intcomma }}</td>
+             </tr>
+             {% endfor %}
+         </table>
+
+        <!-- Totals -->
+        <div class="total">
+            {% if order.coupon %}
+                <p><strong>Subtotal:</strong> {{ order.total_price|add:order.coupon.discount_price|intcomma }}
+                <br><strong>Discount ({{ order.coupon.coupon_code }}):</strong> -{{ order.coupon.discount_price|intcomma }}
+                <br><strong>Total Amount After Discount:</strong> {{ order.total_price|intcomma }} (Inclusive of all taxes)</p>
+            {% else %}
+                <p><strong>Total Amount Paid:</strong> {{ order.total_price|intcomma }} (Inclusive of all taxes)</p>
+            {% endif %}
+        </div>
+
+        <!-- Payment Info -->
+        <div class="info-box">
+            <strong>Payment Method:</strong> Online<br>
+            <strong>Payment Status:</strong> Paid
+        </div>
+
+        <!-- Footer -->
+        <div class="footer" style="text-align:center;">
+            Thank you for shopping with Levis Marketplace!<br>
+            www.levismarketplace.in | support@levismarketplace.in<br>
+            This is a computer-generated invoice and does not require a signature.
+        </div>
+    </div>
+</body>
+</html>

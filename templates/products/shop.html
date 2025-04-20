@@ -1,0 +1,126 @@
+{% extends "base/base.html" %}
+{% load custom_filters %}
+
+{% block title %}Shop{% endblock title %}
+
+{% block start %}
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!-- Custom Stylesheet -->
+<link rel="stylesheet" href="/media/assets/css/shop-style.css">
+
+<!-- Loop through Categories -->
+{% for category in categories %}
+<section class="section mt-4" id="{{ category.slug }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="section-heading">
+                    <h2>{{ category.category_name }}</h2>
+                    <span>Discover the latest products in {{ category.category_name }}.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loop through Subcategories -->
+    {% for subcategory in category.subcategories.all %}
+    <div class="container">
+        <h3 class="subcategory-heading mt-4 mb-4">{{ subcategory.subcategory_name }}</h3>
+        <div class="row">
+            <div class="col-lg-12 position-relative">
+                <!-- Custom Navigation Buttons -->
+                <button class="carousel-prev" data-target="carousel-{{ subcategory.slug }}"><i class="fa fa-chevron-left"></i></button>
+                <button class="carousel-next" data-target="carousel-{{ subcategory.slug }}"><i class="fa fa-chevron-right"></i></button>
+                
+                <!-- Unique Carousel for Each Subcategory -->
+                <div id="carousel-{{ subcategory.slug }}" class="owl-carousel">
+                    {% for product in subcategory.products.all %}
+                    <div class="item">
+                        <div class="thumb">
+                            <div class="hover-content">
+                                <ul>
+                                    <li>
+                                        <a href="{% url 'get_product' product.slug %}"><i class="fa fa-eye"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                            {% if product.product_images.all %}
+                                <img src="{{ product.product_images.first.image.url }}" alt="{{ product.product_name }}" />
+                            {% else %}
+                                <img src="/static/images/default-product.jpg" alt="No Image Available" />
+                            {% endif %}
+                        </div>
+                        <div class="down-content">
+                            <h4>{{ product.product_name }}</h4>
+                            <span>₹{{ product.price }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+{% endfor %}
+
+<!-- Include Required Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+<!-- JavaScript for Custom Carousel Navigation -->
+<script>
+  $(document).ready(function(){
+      $("[id^=carousel-]").each(function() {
+          let carouselId = "#" + $(this).attr("id");
+          
+          $(carouselId).owlCarousel({
+              loop: true,          // Enables infinite scrolling
+              margin: 10,          // Adds space between slides
+              nav: false,          // Disables default nav (we'll use custom buttons)
+              dots: false,         // Removes bottom dots
+              autoplay: false,     // Disables auto-slide
+              responsive: {
+                  0: { items: 1 },     // 1 item on mobile
+                  600: { items: 2 },   // 2 items on tablets
+                  1000: { items: 4 }   // 4 items on large screens
+              }
+          });
+
+          // Custom navigation buttons
+          $(`button.carousel-prev[data-target='${$(this).attr("id")}']`).click(function() {
+              $(carouselId).trigger('prev.owl.carousel');
+          });
+
+          $(`button.carousel-next[data-target='${$(this).attr("id")}']`).click(function() {
+              $(carouselId).trigger('next.owl.carousel');
+          });
+      });
+  });
+</script>
+
+<!-- Custom Styling for Carousel Navigation -->
+<style>
+    .carousel-prev, .carousel-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        z-index: 10;
+        font-size: 20px;
+    }
+    .carousel-prev { left: -40px; }
+    .carousel-next { right: -40px; }
+    .carousel-prev:hover, .carousel-next:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+</style>
+
+{% endblock %}
